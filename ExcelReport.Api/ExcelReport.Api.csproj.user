@@ -4,6 +4,6 @@
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup>
-    <ActiveDebugProfile>ExcelReport</ActiveDebugProfile>
+    <ActiveDebugProfile>ExcelReport.Api</ActiveDebugProfile>
   </PropertyGroup>
 </Project>

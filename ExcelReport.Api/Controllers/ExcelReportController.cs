@@ -1,16 +1,23 @@
 ﻿using ClosedXML.Report;
 using ExcelReport.Api.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace ExcelReport.Controllers
+namespace ExcelReport.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class ExcelReportController : ControllerBase
     {
+        private readonly ILogger<ExcelReportController> _logger;
+
+        public ExcelReportController(ILogger<ExcelReportController> logger)
+        {
+            _logger = logger;
+        }
 
         [HttpGet]
         public IActionResult GetExcelReport()
@@ -19,6 +26,8 @@ namespace ExcelReport.Controllers
 
             try
             {
+                _logger.LogInformation("Iniciando...");
+
                 using (var template = new XLTemplate("TemplateTable.xlsx"))
                 {
                     template.AddVariable(new StockHeader { StockHists = GetHist() });
@@ -26,14 +35,20 @@ namespace ExcelReport.Controllers
                     template.SaveAs(outputFile);
                 }
 
+                _logger.LogInformation("Processando...");
+
                 //Show report
                 Process.Start(new ProcessStartInfo(outputFile) { UseShellExecute = true });
 
+                _logger.LogInformation("Finalizando...");
+
                 return Ok();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500);
+                _logger.LogError(ex, ex.Message);
+
+                return StatusCode(500, ex);
             }
 
         }
